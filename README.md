@@ -30,7 +30,7 @@ julia> for (i, p) in pairs(x_offset)
 ```
 
 ### Iterating over a dimension
-```
+```julia
 julia> for row in axes(x_offset, 1)
            x_offset[row, :] .= 0
        end
@@ -60,3 +60,35 @@ julia> reverse(M; dims=(1,2))
  -2  -3  -4
 ```
 
+## Taking N dimensional slice of an array
+We use `selectdim`. First argument array, second argument dimension, third argument position in that dimension.,
+```julia 
+julia> x = [i+3*j+9*k for i=0:2,j=0:2,k=0:2 ]
+3×3×3 Array{Int64, 3}:
+[:, :, 1] =
+ 0  3  6
+ 1  4  7
+ 2  5  8
+
+[:, :, 2] =
+  9  12  15
+ 10  13  16
+ 11  14  17
+
+[:, :, 3] =
+ 18  21  24
+ 19  22  25
+ 20  23  26
+
+julia> selectdim(x, 3, 1)
+3×3 view(::Array{Int64, 3}, :, :, 1) with eltype Int64:
+ 0  3  6
+ 1  4  7
+ 2  5  8
+
+julia> selectdim(x, 1, 3)
+3×3 view(::Array{Int64, 3}, 3, :, :) with eltype Int64:
+ 2  11  20
+ 5  14  23
+ 8  17  26
+```
