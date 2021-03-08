@@ -92,3 +92,11 @@ julia> selectdim(x, 1, 3)
  5  14  23
  8  17  26
 ```
+
+
+## Bugs
+* GTK.jl + Threads causes [major slowdowns](https://github.com/JuliaGraphics/Gtk.jl/issues/503)
+
+
+## Nice Packages
+* For fast array operations see [Tullio.jl](https://github.com/mcabbott/Tullio.jl)
