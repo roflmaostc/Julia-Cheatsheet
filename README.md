@@ -2,6 +2,74 @@
 A Julia cheatsheet including some tricks and recommended styles
 
 
+## FFT and CUDA
+* Julia 1.6.2 and AMD Ryzen 5 5600X and RTX 2060 Super 8GB.
+```julia
+julia> using FFTW, BenchmarkTools
+
+julia> using CUDA
+
+julia> x = randn(Float32, (50, 50, 50))
+
+julia> x_c = CuArray(x);
+
+julia> p = plan_fft(x, (2,3));
+
+julia> @benchmark p * x
+BenchmarkTools.Trial: 7102 samples with 1 evaluation.
+ Range (min … max):  590.614 μs …   1.529 ms  ┊ GC (min … max): 0.00% … 0.00%
+ Time  (median):     673.503 μs               ┊ GC (median):    0.00%
+ Time  (mean ± σ):   701.655 μs ± 112.999 μs  ┊ GC (mean ± σ):  3.02% ± 8.31%
+
+      ▂▁▂██▅▃▃▂▁  ▁                                         ▂▂  ▂
+  ▃▄▄████████████▇██▇▆▅▅▃▃▅▄▄▃▃▄▁▃▁▁▁▁▁▃▁▄▁▄▄▄▄▁▃▁▁▁▁▃▁▃▁▁▃████ █
+  591 μs        Histogram: log(frequency) by time       1.21 ms <
+
+ Memory estimate: 1.91 MiB, allocs estimate: 4.
+
+julia> p = plan_fft(x, (1,2));
+
+julia> julia> @benchmark p * x
+BenchmarkTools.Trial: 9601 samples with 1 evaluation.
+ Range (min … max):  464.915 μs …   1.886 ms  ┊ GC (min … max): 0.00% … 57.57%
+ Time  (median):     482.785 μs               ┊ GC (median):    0.00%
+ Time  (mean ± σ):   518.510 μs ± 161.075 μs  ┊ GC (mean ± σ):  6.30% ± 12.13%
+
+  ██▆▄                                                  ▁▂▁     ▂
+  █████▅▁▁▃▁▁▁▁▁▁▁▁▃▁▃▃▄▄▆▅▅▁▃▃▁▁▅▅▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▅████▇█▇ █
+  465 μs        Histogram: log(frequency) by time        1.3 ms <
+
+ Memory estimate: 1.91 MiB, allocs estimate: 4.
+ 
+ julia> p_c = plan_fft(x_c, (2,3));
+
+julia> @benchmark (CUDA.@sync p_c * x_c)
+BenchmarkTools.Trial: 10000 samples with 1 evaluation.
+ Range (min … max):  54.940 μs …   8.038 ms  ┊ GC (min … max): 0.00% … 34.24%
+ Time  (median):     56.229 μs               ┊ GC (median):    0.00%
+ Time  (mean ± σ):   60.960 μs ± 169.297 μs  ┊ GC (mean ± σ):  2.16% ±  0.78%
+
+  ▁▆██▇▄▂▁                                                     ▂
+  █████████▇▆▅▅▅▅▅▅▄▅▄▄▄▄▄▁▄▁▄▁▃▃▄▃▁▁▁▁▃▃▁▃▁▃▄▁▁▁▃▁▁▃▁▁▁▄▃▁▁▃▄ █
+  54.9 μs       Histogram: log(frequency) by time      79.6 μs <
+
+ Memory estimate: 2.19 KiB, allocs estimate: 54.
+ 
+julia> p_c = plan_fft(x_c, (1,2));
+
+julia> @benchmark (CUDA.@sync p_c * x_c)
+BenchmarkTools.Trial: 10000 samples with 1 evaluation.
+ Range (min … max):  36.780 μs …   6.213 ms  ┊ GC (min … max): 0.00% … 20.93%
+ Time  (median):     37.960 μs               ┊ GC (median):    0.00%
+ Time  (mean ± σ):   41.191 μs ± 128.370 μs  ┊ GC (mean ± σ):  1.61% ±  0.52%
+
+                    ▁▂▂▃▄▇▆▆█▇▇▇▅▇▆▄▄▅▄▃▂▁                      
+  ▂▁▂▂▂▂▂▃▃▃▃▃▄▅▆▆▇██████████████████████████▇▆▆▅▅▄▄▄▄▃▃▃▃▃▂▃▃ ▅
+  36.8 μs         Histogram: frequency by time         39.2 μs <
+
+ Memory estimate: 2.28 KiB, allocs estimate: 60.
+```
+
 ## Array indexing
 ### Getting index and value
 Generic way to access index and element of an array.
@@ -100,3 +168,5 @@ julia> selectdim(x, 1, 3)
 
 ## Nice Packages
 * For fast array operations see [Tullio.jl](https://github.com/mcabbott/Tullio.jl)
+* [https://github.com/SciML/RecursiveArrayTools.jl](https://github.com/SciML/RecursiveArrayTools.jl)
+* https://github.com/jonniedie/ComponentArrays.jl
