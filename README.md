@@ -167,6 +167,11 @@ julia> selectdim(x, 1, 3)
 
 
 ## Nice Packages
+### Speed!
 * For fast array operations see [Tullio.jl](https://github.com/mcabbott/Tullio.jl)
+### Development
+* https://github.com/JuliaTesting/TestEnv.jl
+
+### Arrays Helpers
 * [https://github.com/SciML/RecursiveArrayTools.jl](https://github.com/SciML/RecursiveArrayTools.jl)
 * https://github.com/jonniedie/ComponentArrays.jl
