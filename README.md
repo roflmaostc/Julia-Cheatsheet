@@ -1,6 +1,33 @@
 # Julia-Cheatsheet
 A Julia cheatsheet including some tricks and recommended styles
 
+## `cispi` (Julia 1.6.2)
+```julia
+julia> using BenchmarkTools
+
+julia> x = randn(ComplexF32, (1024, 200));
+
+julia> @btime exp.(1im .* eltype($x)(π) .* $x);
+  3.194 ms (2 allocations: 1.56 MiB)
+  
+julia> @btime cis.(eltype($x)(π) .* $x)
+  3.103 ms (2 allocations: 1.56 MiB)
+  
+julia> @btime cispi.($x);
+  4.825 ms (2 allocations: 1.56 MiB)
+  
+  
+julia> x = randn(Float32, (1024, 200));
+
+julia> @btime exp.(1im .* eltype($x)(π) .* $x);
+  3.357 ms (2 allocations: 1.56 MiB)
+
+julia> @btime cis.(eltype($x)(π) .* $x)
+  2.952 ms (2 allocations: 1.56 MiB)
+
+julia> @btime cispi.($x);
+  2.234 ms (2 allocations: 1.56 MiB)
+```
 
 ## FFT and CUDA
 * Julia 1.6.2 and AMD Ryzen 5 5600X and RTX 2060 Super 8GB.
