@@ -1,6 +1,33 @@
 # Julia-Cheatsheet
 A Julia cheatsheet including some tricks and recommended styles
 
+## Fast closures (very important for performance!)
+* [See here](https://docs.julialang.org/en/v1/manual/performance-tips/#man-performance-captured)
+Second structure is better
+```julia
+function gen_f(x)
+    if true
+        y = x .+ 1
+    end 
+
+    function f(a)
+        a + y 
+    end 
+    return f
+end
+
+function gen_f_safe(x)
+    if true
+        y = x .+ 1
+    end 
+
+    f = let y = y
+        f(a, y=y) = a + y
+    end 
+    return f
+end
+```
+
 ## `cispi` (Julia 1.6.2)
 ```julia
 julia> using BenchmarkTools
