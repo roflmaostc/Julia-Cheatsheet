@@ -56,6 +56,11 @@ julia> @btime cispi.($x);
   2.234 ms (2 allocations: 1.56 MiB)
 ```
 
+## Convert a `Vector{Vector{Float64}}` to a `Matrix{Float64}`
+* `reduce(hcat, x)
+
+
+
 ## FFT and CUDA
 * Julia 1.6.2 and AMD Ryzen 5 5600X and RTX 2060 Super 8GB.
 ```julia
