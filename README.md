@@ -57,7 +57,7 @@ julia> @btime cispi.($x);
 ```
 
 ## Convert a `Vector{Vector{Float64}}` to a `Matrix{Float64}`
-* `reduce(hcat, x)
+* `reduce(hcat, x)` works
 
 
 
