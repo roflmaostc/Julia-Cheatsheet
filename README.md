@@ -129,6 +129,28 @@ BenchmarkTools.Trial: 10000 samples with 1 evaluation.
  Memory estimate: 2.28 KiB, allocs estimate: 60.
 ```
 
+### Benchmarking 
+```
+using FFTW, CUDA, BenchmarkTools
+
+FFTW.set_num_threads(4)
+function f()
+        for i in [10, 30, 50, 100, 256, 512, 1024, 2048, 4096]
+                x = randn(ComplexF32, (i, i))
+                xc = CuArray(x)
+                p = plan_fft!(similar(x), flags=FFTW.MEASURE)
+                pc = plan_fft!(similar(xc))
+                print("Size: ($i, $i)\n")
+                print("CPU: ")
+                @btime $p * $x
+                print("GPU: ")
+                @btime CUDA.@sync $pc * $xc
+                print("\n")
+        end
+end
+```
+
+
 ## Array indexing
 ### Getting index and value
 Generic way to access index and element of an array.
