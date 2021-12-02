@@ -60,6 +60,47 @@ julia> @btime cispi.($x);
 * `reduce(hcat, x)` works
 
 
+## NTuple
+* Don't call `Tuple` on generator
+
+```julia
+julia> f(x) = Tuple(i for i=1:length(x))
+f (generic function with 1 method)
+
+julia> @code_warntype f((1,2,3,4))
+MethodInstance for f(::NTuple{4, Int64})
+  from f(x) in Main at REPL[5]:1
+Arguments
+  #self#::Core.Const(f)
+  x::NTuple{4, Int64}
+Body::Tuple{Vararg{Int64}}
+1 ─ %1 = Main.length(x)::Core.Const(4)
+│   %2 = (1:%1)::Core.Const(1:4)
+│   %3 = Base.Generator(Base.identity, %2)::Core.Const(Base.Generator{UnitRange{Int64}, typeof(identity)}(identity, 1:4))
+│   %4 = Main.Tuple(%3)::Tuple{Vararg{Int64}}
+└──      return %4
+
+
+julia> f(x) = ntuple(i -> i, 1:length(x))
+f (generic function with 1 method)
+
+julia> @code_warntype f((1,2,3,4))
+MethodInstance for f(::NTuple{4, Int64})
+  from f(x) in Main at REPL[7]:1
+Arguments
+  #self#::Core.Const(f)
+  x::NTuple{4, Int64}
+Locals
+  #1::var"#1#2"
+Body::Union{}
+1 ─      (#1 = %new(Main.:(var"#1#2")))
+│   %2 = #1::Core.Const(var"#1#2"())
+│   %3 = Main.length(x)::Core.Const(4)
+│   %4 = (1:%3)::Core.Const(1:4)
+│        Main.ntuple(%2, %4)
+└──      Core.Const(:(return %5)
+
+
 
 ## FFT and CUDA
 * Julia 1.6.2 and AMD Ryzen 5 5600X and RTX 2060 Super 8GB.
