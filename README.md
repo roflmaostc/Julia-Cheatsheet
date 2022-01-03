@@ -58,7 +58,7 @@ julia> @btime cispi.($x);
 
 ## Convert a `Vector{Vector{Float64}}` to a `Matrix{Float64}`
 * `reduce(hcat, x)` works
-
+* don't use `hcat(x...)` since that is inefficient for a long Vector.
 
 ## NTuple
 * Don't call `Tuple` on generator
