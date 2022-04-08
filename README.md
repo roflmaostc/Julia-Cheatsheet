@@ -174,21 +174,95 @@ BenchmarkTools.Trial: 10000 samples with 1 evaluation.
 ```
 using FFTW, CUDA, BenchmarkTools
 
-FFTW.set_num_threads(4)
-function f()
-        for i in [10, 30, 50, 100, 256, 512, 1024, 2048, 4096]
-                x = randn(ComplexF32, (i, i))
+FFTW.set_num_threads(1)
+function f() 
+        for i in [10, 30, 50, 100, 256, 512, 1024, 1500, 2048, 2500, 3000, 4096, 5000, 6200]
+                x = randn(ComplexF32, (i, i)) 
+                x_copy = similar(x) 
                 xc = CuArray(x)
+                xc_copy = similar(xc)
                 p = plan_fft!(similar(x), flags=FFTW.MEASURE)
                 pc = plan_fft!(similar(xc))
-                print("Size: ($i, $i)\n")
-                print("CPU: ")
+                print("Size:\t\t($i, $i)\n")
+                print("CPU FFT:\t")
                 @btime $p * $x
-                print("GPU: ")
-                @btime CUDA.@sync $pc * $xc
+                print("CPU exp.(i.*x):\t")
+                @btime $x_copy .= exp.(1im .* $x) 
+                print("GPU FFT:\t")
+                @btime CUDA.@sync $pc * $xc 
+                print("GPU exp.(i.*x):\t")
+                @btime $xc_copy .= exp.(1im .* $xc)
                 print("\n")
-        end
+        end 
 end
+
+Size:           (10, 10)
+CPU FFT:          98.652 ns (0 allocations: 0 bytes)
+CPU exp.(i.*x):   85.692 ns (0 allocations: 0 bytes)
+GPU FFT:          6.958 μs (0 allocations: 0 bytes)
+GPU exp.(i.*x):   2.239 μs (22 allocations: 1.62 KiB)
+
+Size:           (30, 30)
+CPU FFT:          1.709 μs (0 allocations: 0 bytes)
+CPU exp.(i.*x):   800.215 ns (0 allocations: 0 bytes)
+GPU FFT:          8.049 μs (0 allocations: 0 bytes)
+GPU exp.(i.*x):   2.244 μs (23 allocations: 1.64 KiB)
+
+Size:           (50, 50)
+CPU FFT:          4.896 μs (0 allocations: 0 bytes)
+CPU exp.(i.*x):   2.004 μs (0 allocations: 0 bytes)
+GPU FFT:          8.381 μs (0 allocations: 0 bytes)
+GPU exp.(i.*x):   2.234 μs (23 allocations: 1.64 KiB)
+
+Size:           (100, 100)
+CPU FFT:          17.796 μs (0 allocations: 0 bytes)
+CPU exp.(i.*x):   7.412 μs (0 allocations: 0 bytes)
+GPU FFT:          8.745 μs (0 allocations: 0 bytes)
+GPU exp.(i.*x):   2.246 μs (23 allocations: 1.64 KiB)
+
+Size:           (256, 256)
+CPU FFT:          99.479 μs (0 allocations: 0 bytes)
+CPU exp.(i.*x):   47.364 μs (0 allocations: 0 bytes)
+GPU FFT:          10.154 μs (0 allocations: 0 bytes)
+GPU exp.(i.*x):   2.310 μs (23 allocations: 1.64 KiB)
+
+Size:           (512, 512)
+CPU FFT:          478.615 μs (0 allocations: 0 bytes)
+CPU exp.(i.*x):   188.864 μs (0 allocations: 0 bytes)
+GPU FFT:          19.743 μs (0 allocations: 0 bytes)
+GPU exp.(i.*x):   2.223 μs (23 allocations: 1.64 KiB)
+
+Size:           (1024, 1024)
+CPU FFT:          2.006 ms (0 allocations: 0 bytes)
+CPU exp.(i.*x):   794.845 μs (0 allocations: 0 bytes)
+GPU FFT:          116.681 μs (0 allocations: 0 bytes)
+GPU exp.(i.*x):   2.250 μs (23 allocations: 1.64 KiB)
+
+Size:           (1500, 1500)
+CPU FFT:          6.604 ms (0 allocations: 0 bytes)
+CPU exp.(i.*x):   1.810 ms (0 allocations: 0 bytes)
+GPU FFT:          383.159 μs (47 allocations: 2.92 KiB)
+GPU exp.(i.*x):   2.275 μs (23 allocations: 1.64 KiB)
+
+Size:           (2048, 2048)
+CPU FFT:          14.919 ms (0 allocations: 0 bytes)
+CPU exp.(i.*x):   3.398 ms (0 allocations: 0 bytes)
+GPU FFT:          511.791 μs (47 allocations: 2.92 KiB)
+GPU exp.(i.*x):   2.240 μs (23 allocations: 1.64 KiB)
+
+Size:           (2500, 2500)
+CPU FFT:          23.747 ms (0 allocations: 0 bytes)
+CPU exp.(i.*x):   5.113 ms (0 allocations: 0 bytes)
+GPU FFT:          875.875 μs (0 allocations: 0 bytes)
+GPU exp.(i.*x):   2.273 μs (23 allocations: 1.64 KiB)
+
+Size:           (3000, 3000)
+CPU FFT:          30.999 ms (0 allocations: 0 bytes)
+CPU exp.(i.*x):   7.413 ms (0 allocations: 0 bytes)
+GPU FFT:          1.509 ms (47 allocations: 2.92 KiB)
+GPU exp.(i.*x):   2.316 μs (23 allocations: 1.64 KiB)
+
+
 ```
 
 
