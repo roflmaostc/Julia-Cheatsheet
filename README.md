@@ -1,6 +1,28 @@
 # Julia-Cheatsheet
 A Julia cheatsheet including some tricks and recommended styles
 
+## Irrationals such as `pi`
+Pay attention if you work with Irrationals such as `\pi` or `\euler` because of this:
+```julia
+julia> x = randn(Float32, (2, 2));
+
+julia> x ./ (2π)    # return type is no longer Matrix{Float32}
+2×2 Matrix{Float64}:
+ 0.0696637  -0.0217089
+ 0.115218   -0.0953945
+
+julia> x ./ π
+2×2 Matrix{Float32}:
+  0.422652   -0.122149
+ -0.0879406   0.474876
+
+julia> x ./ (eltype(x)(2π))   # workaround
+2×2 Matrix{Float32}:
+ 0.0696637  -0.0217089
+ 0.115218   -0.0953945
+ ```
+ The Array element type changes. Therefore always convert your Irrational! Often you can do in functions `T(pi)` if you have an 
+
 ## Fast closures (very important for performance!)
 * [See here](https://docs.julialang.org/en/v1/manual/performance-tips/#man-performance-captured)
 Second structure is better
