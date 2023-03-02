@@ -425,3 +425,32 @@ julia> selectdim(x, 1, 3)
 ### Arrays Helpers
 * [https://github.com/SciML/RecursiveArrayTools.jl](https://github.com/SciML/RecursiveArrayTools.jl)
 * https://github.com/jonniedie/ComponentArrays.jl
+
+
+### Broadcast Shape
+
+
+
+
+```julia
+function f(sa::NTuple{N, T}, sb::NTuple{N, T}) where {N, T}
+    function f(i)
+        if sb[i] == sa[i]
+            return sb[i]    
+        elseif sb[i] == 1 || sa[i] == 1
+            return max(sa[i], sb[i])
+        else
+            error("Broadcast error")
+        end
+    end
+    return ntuple(i -> f(i), N)
+end
+
+
+function f(sa::NTuple{N, T}, sb::NTuple{M, T}) where {N, M, T}
+    if M < N
+        return f(sb, sa)
+    else
+        return f(ntuple(i -> i ≤ N ? sa[i] : 1, M) ,sb)
+    end
+end 
