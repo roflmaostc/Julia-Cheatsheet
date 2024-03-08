@@ -1,6 +1,27 @@
 # Julia-Cheatsheet
 A Julia cheatsheet including some tricks and recommended styles
 
+## Complex Plots
+```
+# ╔═╡ 487fbad4-dd5d-11ee-369c-2b789fd929d8
+using Plots, ImageShow, ImageIO
+
+# ╔═╡ 818eb241-511c-4ed8-b8f3-d5660916fcb3
+img = randn(ComplexF32, (50, 30))
+
+# ╔═╡ 8de60652-51d6-41ea-91c4-adc5f5117464
+y = range(0, 1, 50)
+
+# ╔═╡ aa6e86d3-9993-4ddb-8d3f-5710d09656b5
+x = range(0, 1, 30)
+
+# ╔═╡ 145aec23-f6f4-4043-a171-a3b3225a7af3
+heatmap(y, x, simshow(cispi.(randn((30, 50)))), xlim=(0,1), 
+	zcolor=range(0,2π,100),  colorbar_title="phase",
+	colorbar_ticks=[0,π/2, π, π * 3 / 2, 2π],
+	color = palette(:hsv, length(unique(range(0, 1, 100)))))
+```
+
 ## Irrationals such as `pi`
 Pay attention if you work with Irrationals such as `\pi` or `\euler` because of this:
 ```julia
