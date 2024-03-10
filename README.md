@@ -1,6 +1,7 @@
 # Julia-Cheatsheet
 A Julia cheatsheet including some tricks and recommended styles
 
+
 ## Complex Plots
 ```
 # ╔═╡ 487fbad4-dd5d-11ee-369c-2b789fd929d8
